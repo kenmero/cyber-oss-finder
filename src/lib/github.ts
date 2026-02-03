@@ -128,7 +128,11 @@ export const searchRepositories = async (query: string, limit: number = 5): Prom
     if (!query) return [];
 
     try {
-        const octokit = new Octokit();
+        // Use GitHub token if available, otherwise use unauthenticated (60 req/hour limit)
+        const octokit = new Octokit({
+            auth: process.env.GITHUB_TOKEN || undefined
+        });
+
         // Translate query using dictionary
         const translatedQuery = translateQuery(query);
         console.log(`Searching for: ${translatedQuery} (Original: ${query})`);
